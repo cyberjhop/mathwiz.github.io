@@ -1,0 +1,32 @@
+@keyframes algebra_text {
+    0% { color: #D52349; } 
+    25% { color: #FF5733; } 
+    50% { color: #FFC300; } 
+    75% { color: #FF5733; } 
+    100% { color: #900C3F; } 
+}
+.algebra-animation {
+    animation: algebra_text 4s infinite alternate ease-in-out;
+}
+
+@keyframes geometry_text {
+    0% { color: #1D8348; } 
+    25% { color: #28B463; } 
+    50% { color: #F4D03F; } 
+    75% { color: #239B56; } 
+    100% { color: #145A32; } 
+}
+.geometry-animation {
+    animation: geometry_text 4s infinite alternate ease-in-out;
+}
+
+@keyframes math_text {
+    0% { color: #154360; }
+    25% { color: #1F618D; } 
+    50% { color: #85C1E9; } 
+    75% { color: #2E86C1; } 
+    100% { color: #0B5345; } 
+}
+.math-animation {
+    animation: math_text 4s infinite alternate ease-in-out;
+}
