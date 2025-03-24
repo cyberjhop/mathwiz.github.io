@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<title>Dopetrope by HTML5 UP</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 20px;
+			background-color: #f4f4f4;
+		}
+
+		.quiz-container {
+			max-width: 600px;
+			margin: auto;
+			background: white;
+			padding: 20px;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		}
+
+		.question {
+			margin-bottom: 15px;
+		}
+
+		.options label {
+			display: block;
+			margin-bottom: 5px;
+		}
+
+		.result {
+			margin-top: 20px;
+			font-weight: bold;
+		}
+
+		button {
+			margin-top: 10px;
+			padding: 10px;
+			background-color: #28a745;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+
+		button:hover {
+			background-color: #218838;
+		}
+	</style>
+</head>
+
+<body class="left-sidebar is-preload">
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<section id="header">
+
+			<!-- Logo -->
+			<h1><a href="index.html">Math Wiz</a></h1>
+
+			<!-- Nav -->
+			<nav id="nav">
+				<ul>
+					<li class="current"><a href="index.html">Home</a></li>
+					<li>
+						<a href="#">Quizzes</a>
+						<ul>
+							<li><a href="basic_math.html">Basic Math</a></li>
+							<li><a href="algebra_quiz.html">Algebra</a></li>
+							<li><a href="geometry_quiz.html">Geometry</a></li>
+						</ul>
+					</li>
+					<li><a href="guides.html">Guides</a></li>
+					<li><a href="glossary.html">Glossary</a></li>
+					<!-- <li><a href="no-sidebar.html">No Sidebar</a></li> -->
+				</ul>
+			</nav>
+
+		</section>
+
+		<section id="main">
+			<div class="container">
+				<div class="row">
+					<div class="col-4 col-12-medium">
+
+						<section class="box">
+							<header>
+								<h3>Quick links</h3>
+							</header>
+							<p>“Without mathematics, there’s nothing you can do. Everything around you is mathematics.
+								Everything around you is numbers.” – <strong>Shakuntala Devi</strong></p>
+							<ul class="divided">
+								<li><a href="algebra_quiz.html">Algebra</a></li>
+								<li><a href="geometry_quiz.html">Geometry</a></li>
+								<li><a href="basic_math.html">Basic Math</a></li>
+							</ul>
+						</section>
+
+					</div>
+					<div class="col-8 col-12-medium imp-medium">
+
+						<article class="box post">
+							<a href="#" class="image featured"><img src="images/algebra.png" alt="" /></a>
+							<h2>Algebra Quiz</h2>
+							<br>
+							<section class="quiz-container">
+								<div id="question-container"></div>
+								
+								<button id="next-button" onclick="nextQuestion()">Next</button>
+								<button id="submit-button" onclick="checkAnswers()" style="display:none;">Submit</button>
+								<button id="restart-button" onclick="restartQuiz()" style="display:none;">Restart Quiz</button>
+								<p class="result" id="result"></p>
+							</section>
+
+						</article>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+
+	</div>
+	<script>
+		let questions = [
+			{ id: "q1", text: "Solve for x: 2x + 5 = 11", options: ["x = 3", "x = 4", "x = 5"], correct: "x = 3" },
+			{ id: "q2", text: "What is the value of x in the equation: x^2 - 4 = 0?", options: ["x = 2 or -2", "x = 4 or -4", "x = 0"], correct: "x = 2 or -2" },
+			{ id: "q3", text: "Solve for y: 3y - 7 = 2", options: ["y = 3", "y = 4", "y = 5"], correct: "y = 3" },
+			{ id: "q4", text: "What is the value of x in the equation: x^2 - 9 = 0?", options: ["x = 3 or -3", "x = 9 or -9", "x = 0"], correct: "x = 3 or -3" },
+			{ id: "q5", text: "Solve for z: 5z + 10 = 35", options: ["z = 5", "z = 6", "z = 7"], correct: "z = 5" }
+		];
+		
+		let currentQuestionIndex = 0;
+		let answers = {};
+		
+		function loadQuestion() {
+			let container = document.getElementById("question-container");
+			let question = questions[currentQuestionIndex];
+			container.innerHTML = `
+				<div class="question">
+					<p>${currentQuestionIndex + 1}. ${question.text}</p>
+					<div class="options" id="${question.id}">
+						${question.options.map(option => `<button class="option" onclick="selectAnswer('${question.id}', '${option}')">${option}</button>`).join('')}
+					</div>
+				</div>
+			`;
+		}
+		
+		function selectAnswer(questionId, value) {
+			answers[questionId] = value;
+			let buttons = document.querySelectorAll(`#${questionId} .option`);
+			buttons.forEach(btn => btn.classList.remove('selected'));
+			event.target.classList.add('selected');
+		}
+		
+		function nextQuestion() {
+			if (currentQuestionIndex < questions.length - 1) {
+				currentQuestionIndex++;
+				loadQuestion();
+			}
+			
+			if (currentQuestionIndex === questions.length - 1) {
+				document.getElementById("next-button").style.display = "none";
+				document.getElementById("submit-button").style.display = "inline";
+			}
+		}
+		
+		function checkAnswers() {
+			let score = 0;
+			
+			questions.forEach(q => {
+				if (answers[q.id] === q.correct) score++;
+			});
+			
+			document.getElementById("result").innerText = "You scored " + score + "/5!";
+			document.getElementById("submit-button").style.display = "none";
+			document.getElementById("restart-button").style.display = "inline";
+		}
+		
+		function restartQuiz() {
+			currentQuestionIndex = 0;
+			answers = {};
+			document.getElementById("result").innerText = "";
+			document.getElementById("restart-button").style.display = "none";
+			document.getElementById("submit-button").style.display = "none";
+			document.getElementById("next-button").style.display = "inline";
+			loadQuestion();
+		}
+		
+		loadQuestion();
+		</script>
+	<style>
+		.options {
+			display: flex;
+			gap: 10px;
+		}
+
+		.option {
+			background-color: lightgray;
+			padding: 10px 20px;
+			border: none;
+			cursor: pointer;
+			border-radius: 5px;
+		}
+
+		.option.selected {
+			background-color: orange;
+			color: white;
+		}
+	</style>
+
+
+
+
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/jquery.dropotron.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<title>Dopetrope by HTML5 UP</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+
+	<style>
+		.quiz-container {
+			background: white;
+			padding: 20px;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			width: 100%;
+			margin: auto;
+		}
+
+		h2 {
+			color: #333;
+		}
+
+		#timer {
+			font-size: 18px;
+			font-weight: bold;
+			margin-bottom: 10px;
+			color: red;
+		}
+
+		#question-container p {
+			font-size: 18px;
+			font-weight: bold;
+		}
+
+		button {
+			display: block;
+			width: 80%;
+			margin: 10px auto;
+			padding: 10px;
+			font-size: 16px;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: background 0.3s;
+		}
+
+		.selected {
+			background-color: #4CAF50;
+			color: white;
+		}
+
+		#next-button {
+			background-color: #007bff;
+			color: white;
+		}
+
+		#submit-button {
+			background-color: #28a745;
+			color: white;
+		}
+
+		#restart-button {
+			background-color: #dc3545;
+			color: white;
+		}
+	</style>
+</head>
+
+<body class="left-sidebar is-preload">
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<section id="header">
+
+			<!-- Logo -->
+			<h1><a href="index.html">Math Wiz</a></h1>
+
+			<!-- Nav -->
+			<nav id="nav">
+				<ul>
+					<li class="current"><a href="index.html">Home</a></li>
+					<li>
+						<a href="#">Quizzes</a>
+						<ul>
+							<li><a href="basic_math.html">Basic Math</a></li>
+							<li><a href="algebra_quiz.html">Algebra</a></li>
+							<li><a href="geometry_quiz.html">Geometry</a></li>
+						</ul>
+					</li>
+					<li><a href="guides.html">Guides</a></li>
+					<li><a href="glossary.html">Glossary</a></li>
+					<!-- <li><a href="no-sidebar.html">No Sidebar</a></li> -->
+				</ul>
+			</nav>
+
+		</section>
+
+		<section id="main">
+			<div class="container">
+				<div class="row">
+					<div class="col-4 col-12-medium">
+
+						<section class="box">
+							<header>
+								<h3>Quick links</h3>
+							</header>
+							<p>“Without mathematics, there’s nothing you can do. Everything around you is mathematics.
+								Everything around you is numbers.” – <strong>Shakuntala Devi</strong></p>
+							<ul class="divided">
+								<li><a href="algebra_quiz.html">Algebra</a></li>
+								<li><a href="geometry_quiz.html">Geometry</a></li>
+								<li><a href="basic_math.html">Basic Math</a></li>
+							</ul>
+						</section>
+
+					</div>
+					<div class="col-8 col-12-medium imp-medium">
+
+						<article class="box post">
+							<a href="#" class="image featured"><img src="images/geometry_bg.png" alt="" /></a>
+							<br>
+							<section class="quiz-container">
+								<h2>Geometry Quiz</h2>
+								<br>
+								<div id="timer">Time Left: <span id="time-left">30</span> seconds</div>
+
+								<div id="question-container">
+									<!-- Questions will be inserted dynamically -->
+								</div>
+								<br>
+								<button id="next-button" onclick="nextQuestion()" disabled>Next</button>
+								<button id="submit-button" onclick="checkAnswers()"
+									style="display:none;">Submit</button>
+								<button id="restart-button" onclick="restartQuiz()" style="display:none;">Restart
+									Quiz</button>
+								<p class="result" id="result" style="text-align: center;"></p>
+							</section>
+
+						</article>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+
+	</div>
+	<script>
+		const questions = [
+			{ question: "What is the sum of the interior angles of a triangle?", options: ["90°", "180°", "360°"], answer: "180°" },
+			{ question: "How many sides does a hexagon have?", options: ["5", "6", "7"], answer: "6" },
+			{ question: "What is the name of a quadrilateral with two pairs of parallel sides?", options: ["Trapezoid", "Parallelogram", "Rhombus"], answer: "Parallelogram" },
+			{ question: "What is the formula for the area of a circle?", options: ["πr²", "2πr", "πd"], answer: "πr²" },
+			{ question: "What type of triangle has all three sides of different lengths?", options: ["Equilateral", "Isosceles", "Scalene"], answer: "Scalene" }
+		];
+
+		let currentQuestionIndex = 0;
+		let userAnswers = [];
+		let timeLeft = 10;
+		let timer;
+
+		function startTimer() {
+			clearInterval(timer);
+			timeLeft = 10;
+			document.getElementById("time-left").textContent = timeLeft;
+
+			timer = setInterval(() => {
+				timeLeft--;
+				document.getElementById("time-left").textContent = timeLeft;
+				if (timeLeft === 0) {
+					clearInterval(timer);
+					nextQuestion();
+				}
+			}, 1000);
+		}
+
+		function loadQuestion() {
+			const container = document.getElementById("question-container");
+			container.innerHTML = "";
+
+			const questionData = questions[currentQuestionIndex];
+			const questionElement = document.createElement("p");
+			questionElement.textContent = questionData.question;
+			container.appendChild(questionElement);
+
+			questionData.options.forEach(option => {
+				const button = document.createElement("button");
+				button.textContent = option;
+				button.onclick = () => selectAnswer(option, button);
+				container.appendChild(button);
+			});
+
+			startTimer();
+		}
+
+		function selectAnswer(answer, button) {
+			userAnswers[currentQuestionIndex] = answer;
+			document.getElementById("next-button").disabled = false;
+
+			const buttons = document.querySelectorAll("#question-container button");
+			buttons.forEach(btn => btn.classList.remove("selected"));
+
+			button.classList.add("selected");
+		}
+
+		function nextQuestion() {
+			clearInterval(timer);
+
+			if (currentQuestionIndex < questions.length - 1) {
+				currentQuestionIndex++;
+				loadQuestion();
+				document.getElementById("next-button").disabled = true;
+			} else {
+				document.getElementById("next-button").style.display = "none";
+				document.getElementById("submit-button").style.display = "";
+			}
+		}
+
+		function checkAnswers() {
+			clearInterval(timer);
+			let score = 0;
+			questions.forEach((q, index) => {
+				if (userAnswers[index] === q.answer) {
+					score++;
+				}
+			});
+
+			let resultText = `You scored ${score} out of ${questions.length}. `;
+
+			if (score >= Math.ceil(questions.length * 0.6)) {
+				resultText += "Congratulations! You passed.";
+			} else {
+				resultText += "Better luck next time! You failed.";
+			}
+
+			document.getElementById("result").textContent = resultText;
+			document.getElementById("submit-button").style.display = "none";
+			document.getElementById("restart-button").style.display = "";
+		}
+
+
+		function restartQuiz() {
+			currentQuestionIndex = 0;
+			userAnswers = [];
+			document.getElementById("result").textContent = "";
+			document.getElementById("restart-button").style.display = "none";
+			document.getElementById("next-button").style.display = "";
+			document.getElementById("next-button").disabled = true;
+			loadQuestion();
+		}
+
+		loadQuestion();
+	</script>
+
+
+
+
+
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/jquery.dropotron.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
